@@ -13,8 +13,8 @@ templates you first need to load them::
 
 .. _thumbnail:
 
-thumbnail
-=========
+Template tag ``thumbnail``
+==========================
 
 Syntax::
 
@@ -194,9 +194,44 @@ options that have a key in ``options`` are overwritten. Similarly, options in
 the ``options`` dict will be overwritten by options set after the options
 keyword argument to the thumbnail tag.
 
+Properties of resulting variable
+--------------------------------
 
-is_portrait
-===========
+You can give the resulting variable any name you choose. For instance, in this
+example, the resulting variable is named ``im``::
+
+    {% thumbnail item.image "500x500" as im %}
+        <img src="{{ im.url }}" height="{{ im.height }}" width="{{ im.width }}">
+        <p>The ratio is: {{ im.ratio }}</p>
+    {% endthumbnail %}
+
+This variable has multiple properties, which you can use in the resulting block.
+
+Property ``url``
+^^^^^^^^^^^^^^^^
+The URL of the resulting thumbnail, usually put in the ``src`` attribute of an
+``img`` HTML element.
+
+Property ``width`` or ``x``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The width of the resulting thumbnail in pixels. ``width`` and ``x`` are
+synonyms of each other.
+
+Property ``height`` or ``y``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The height of the resulting thumbnail in pixels. ``height`` and ``y`` are
+synonyms of each other.
+
+Property ``size``
+^^^^^^^^^^^^^^^^^
+The two-tuple representing ``(width, height)`` in pixels.
+
+Property ``ratio``
+^^^^^^^^^^^^^^^^^^
+The ratio of width over height.
+
+Template tag ``is_portrait``
+============================
 This filter returns True if the image height is larger than the image width.
 Examples::
 
@@ -223,8 +258,8 @@ Examples::
     {% endif %}
 
 
-margin
-======
+Template tag ``margin``
+=======================
 Margin is a filter for calculating margins against a padding box. For example
 lets say you have an image ``item.image`` and you want to pad it vertically in
 a 1000x1000 box, you would simply write::
@@ -251,8 +286,8 @@ outputs all values.
 
 .. _css background-position: http://www.w3.org/TR/CSS2/colors.html#propdef-background-position
 
-resolution
-==========
+Template tag ``resolution``
+===========================
 Resolution is a filter for obtaining alternative resolution versions of the
 thumbnail.  Your provided resolution must be one of the
 ``THUMBNAIL_ALTERNATIVE_RESOLUTIONS`` settings values (default: no alternative resolutions)
