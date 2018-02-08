@@ -200,7 +200,7 @@ is_portrait
 This filter returns True if the image height is larger than the image width.
 Examples::
 
-    {% thumbnail item.image "100x100" %}
+    {% thumbnail item.image "100x100" as im %}
     {% if item.image|is_portrait %}
         <div class="portrait">
             <img src="{{ im.url }}">
@@ -213,11 +213,11 @@ Examples::
     {% endthumbnail %}
 
     {% if item.image|is_portrait %}
-        {% thumbnail item.image "100x200" crop="center" %}
+        {% thumbnail item.image "100x200" crop="center" as im %}
             <img src="{{ im.url }}">
         {% endthumbnail %}
     {% else %}
-        {% thumbnail item.image "200x100" crop="center" %}
+        {% thumbnail item.image "200x100" crop="center" as im %}
             <img src="{{ im.url }}">
         {% endthumbnail %}
     {% endif %}
