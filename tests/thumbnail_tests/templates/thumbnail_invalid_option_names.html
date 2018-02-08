@@ -1,0 +1,5 @@
+{% load thumbnail %}{% spaceless %}
+{% thumbnail item.image "200x200" foo="bar" as im %}
+    <img width="{{ im.width }}" height="{{ im.height }}">
+{% endthumbnail %}
+{% endspaceless %}

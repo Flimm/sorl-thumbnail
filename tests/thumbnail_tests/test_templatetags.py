@@ -4,6 +4,7 @@ import re
 from subprocess import Popen, PIPE
 from PIL import Image
 
+from django.template import TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.test import Client, TestCase
 import pytest
@@ -112,6 +113,12 @@ class TemplateTestCaseA(BaseTestCase):
             if exif and not (settings.THUMBNAIL_CONVERT.endswith('gm convert') or
                              'pgmagick_engine' in settings.THUMBNAIL_ENGINE):
                 self.assertEqual(exif.get(0x0112), 1)
+
+    def test_invalid_option_names(self):
+        item = Item.objects.get(image='500x500.jpg')
+        with override_custom_settings(settings, THUMBNAIL_DEBUG=True):
+            with self.assertRaises(TemplateSyntaxError):
+                render_to_string('thumbnail_invalid_option_names.html', {'item': item, }).strip()
 
 
 class TemplateTestCaseB(BaseTestCase):

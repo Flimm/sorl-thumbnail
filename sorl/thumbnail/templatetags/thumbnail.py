@@ -94,6 +94,8 @@ class ThumbnailNode(ThumbnailNodeBase):
     child_nodelists = ('nodelist_file', 'nodelist_empty')
     error_msg = ('Syntax error. Expected: ``thumbnail source geometry '
                  '[key1=val1 key2=val2...] as var``')
+    valid_options = set(['crop', 'upscale', 'quality', 'progressive', 'orientation', 'format',
+                         'colorspace', 'padding', 'padding_color', 'options'])
 
     def __init__(self, parser, token):
         bits = token.split_contents()
@@ -114,7 +116,10 @@ class ThumbnailNode(ThumbnailNodeBase):
                 raise TemplateSyntaxError(self.error_msg)
             key = smart_str(m.group('key'))
             expr = parser.compile_filter(m.group('value'))
-            self.options.append((key, expr))
+            if key in self.valid_options:
+                self.options.append((key, expr))
+            elif sorl_settings.THUMBNAIL_DEBUG:
+                raise TemplateSyntaxError("Syntax error. Invalid option '%s'" % (key,))
 
         if bits[-2] == 'as':
             self.as_var = bits[-1]
@@ -131,7 +136,11 @@ class ThumbnailNode(ThumbnailNodeBase):
             noresolve = {'True': True, 'False': False, 'None': None}
             value = noresolve.get(text_type(expr), expr.resolve(context))
             if key == 'options':
-                options.update(value)
+                for subkey in value.keys():
+                    if subkey in self.valid_options:
+                        options[subkey] = value[subkey]
+                    elif sorl_settings.THUMBNAIL_DEBUG:
+                        raise TemplateSyntaxError("Invalid option '%s'" % (subkey,))
             else:
                 options[key] = value
 
